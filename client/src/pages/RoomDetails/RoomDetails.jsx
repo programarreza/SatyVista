@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
-import Container from "../../components/Shared/Container";
-import { useParams } from "react-router-dom";
-import Loader from "../../components/Shared/Loader";
 import { Helmet } from "react-helmet-async";
+import { useParams } from "react-router-dom";
+import Header from "../../components/RoomDetails/Header";
+import RoomInfo from "../../components/RoomDetails/RoomInfo";
+import RoomReservation from "../../components/RoomDetails/RoomReservation";
+import Container from "../../components/Shared/Container";
+import Loader from "../../components/Shared/Loader";
 const RoomDetails = () => {
   const { id } = useParams();
   const [room, setRoom] = useState({});
@@ -27,14 +30,21 @@ const RoomDetails = () => {
         <title>{room?.title}</title>
       </Helmet>
 
-      <div className="">
+      <div className=" max-w-screen-lg mx-auto">
         {/* Header */}
-        <div className=""></div>
+        <div className="">
+          <Header room={room} />
+        </div>
 
-        {/* Room info */}
-        <div className=""></div>
+        <div className="grid md:grid-cols-7 md:gap-10 mt-12">
+          {/* Room info */}
+          <RoomInfo room={room} />
 
-		{/* Calender */}
+          {/* room reservation */}
+          <div className="col-span-3 order-first md:order-last mx-auto">
+            <RoomReservation room={room} />
+          </div>
+        </div>
       </div>
     </Container>
   );
