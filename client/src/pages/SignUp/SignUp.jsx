@@ -4,9 +4,10 @@ import { imageUpload } from "../../api/utils";
 import useAuth from "../../hooks/useAuth";
 import { getToken, saveUser } from "../../api/auth";
 import { toast } from "react-hot-toast";
+import { ImSpinner9 } from "react-icons/im";
 
 const SignUp = () => {
-  const { createUser, signInWithGoogle, updateUserProfile } = useAuth();
+  const { createUser, signInWithGoogle, updateUserProfile, loading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -43,6 +44,27 @@ const SignUp = () => {
       console.log(error);
     }
   };
+
+  const handleGoogleSignIn = async() => {
+    try {
+      //2. User Registration
+      const result = await signInWithGoogle();
+
+      //4. save user data in database
+      const dbResponse = await saveUser(result?.user);
+      console.log(dbResponse);
+
+      //5. get token
+      await getToken(result?.user?.email);
+
+      toast.success("SignUp Successfully");
+      navigate("/");
+
+    } catch (error) {
+      toast.error(error?.message);
+      console.log(error);
+    }
+  }
 
   return (
     <div className="flex justify-center items-center min-h-screen">
@@ -120,7 +142,9 @@ const SignUp = () => {
               type="submit"
               className="bg-rose-500 w-full rounded-md py-3 text-white"
             >
-              Continue
+              {
+                loading ? <ImSpinner9 className="animate-spin m-auto"/> : "Continue"
+              }
             </button>
           </div>
         </form>
@@ -132,7 +156,7 @@ const SignUp = () => {
           <div className="flex-1 h-px sm:w-16 dark:bg-gray-700"></div>
         </div>
         <div
-          onClick={signInWithGoogle}
+          onClick={handleGoogleSignIn}
           className="flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer"
         >
           <FcGoogle size={32} />
